@@ -86,19 +86,43 @@ export default function Home() {
         <div className="atmosphere" aria-hidden="true" />
 
         <header className="hero">
-          <p className="brand">{trip.brand}</p>
-          <h1 className="hero-title">{trip.title}</h1>
-          <p className="hero-lede">{trip.subtitle}</p>
-          <div className="hero-meta">
-            <span>{trip.dates}</span>
-            <span className="dot" aria-hidden="true" />
-            <span>{trip.route}</span>
-            <span className="dot" aria-hidden="true" />
-            <span>{trip.hotels}</span>
+          <div className="hero-media" aria-hidden="true">
+            <div className="hero-photo hero-photo-hue">
+              <img
+                src="/images/hue.jpg"
+                alt=""
+                width={1800}
+                height={1197}
+                decoding="async"
+              />
+            </div>
+            <div className="hero-photo hero-photo-danang">
+              <img
+                src="/images/danang-coast.jpg"
+                alt=""
+                width={1800}
+                height={1348}
+                decoding="async"
+              />
+            </div>
+            <div className="hero-veil" />
           </div>
-          <button type="button" className="cta" onClick={scrollToItinerary}>
-            Open the itinerary
-          </button>
+
+          <div className="hero-copy">
+            <p className="brand">{trip.brand}</p>
+            <h1 className="hero-title">{trip.title}</h1>
+            <p className="hero-lede">{trip.subtitle}</p>
+            <div className="hero-meta">
+              <span>{trip.dates}</span>
+              <span className="dot" aria-hidden="true" />
+              <span>{trip.route}</span>
+              <span className="dot" aria-hidden="true" />
+              <span>{trip.hotels}</span>
+            </div>
+            <button type="button" className="cta" onClick={scrollToItinerary}>
+              Open the itinerary
+            </button>
+          </div>
         </header>
 
         <main id="itinerary" className="itinerary">
