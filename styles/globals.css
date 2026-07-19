@@ -65,9 +65,177 @@ button {
 
 .hero,
 .itinerary,
-.footer {
+.footer,
+.trips-hero,
+.trips-main {
   position: relative;
   z-index: 1;
+}
+
+.trips-hero {
+  padding: clamp(3rem, 10vh, 6rem) clamp(1.5rem, 4vw, 3rem) 1.5rem;
+  max-width: 58rem;
+  margin: 0 auto;
+}
+
+.trips-hero-copy {
+  max-width: 36rem;
+  animation: rise 0.85s ease-out both;
+}
+
+.trips-kicker {
+  margin: 0 0 0.65rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--sea);
+}
+
+.trips-brand {
+  margin: 0 0 0.85rem;
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 10vw, 5.25rem);
+  font-weight: 500;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.trips-lede {
+  margin: 0;
+  max-width: 28rem;
+  font-size: clamp(1.02rem, 2.2vw, 1.15rem);
+  color: var(--ink-soft);
+}
+
+.trips-main {
+  padding: 0.5rem clamp(1.5rem, 4vw, 3rem) 4rem;
+  max-width: 58rem;
+  margin: 0 auto;
+}
+
+.trips-empty {
+  margin: 1.5rem 0 0;
+  color: var(--ink-soft);
+}
+
+.trip-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--line);
+}
+
+.trip-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.75rem 1rem;
+  align-items: start;
+  padding: 1.15rem 0;
+  border-bottom: 1px solid var(--line);
+  animation: itemIn 0.4s ease both;
+}
+
+.trip-row.is-editing {
+  grid-template-columns: 1fr;
+  padding-block: 1.35rem;
+}
+
+.trip-link {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.15s ease;
+}
+
+.trip-link:hover .trip-link-title {
+  color: var(--sea-deep);
+}
+
+.trip-link:focus-visible {
+  outline: 2px solid var(--sunrise);
+  outline-offset: 4px;
+}
+
+.trip-link-brand {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--sea);
+}
+
+.trip-link-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 3vw, 1.7rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  transition: color 0.15s ease;
+}
+
+.trip-link-subtitle {
+  color: var(--ink-soft);
+  font-size: 0.98rem;
+  max-width: 36rem;
+}
+
+.trip-link-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.65rem;
+  margin-top: 0.35rem;
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+}
+
+.trip-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  padding-top: 0.35rem;
+}
+
+.trip-form {
+  margin-top: 0.25rem;
+}
+
+.back-to-trips {
+  display: inline-block;
+  margin-bottom: 1rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(242, 247, 244, 0.88);
+  text-decoration: none;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+  animation: rise 0.9s ease-out both;
+  transition: color 0.15s ease;
+}
+
+.back-to-trips:hover {
+  color: #ffffff;
+}
+
+.back-to-trips:focus-visible {
+  outline: 2px solid #f0a46a;
+  outline-offset: 3px;
+}
+
+.footer a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.footer a:hover {
+  color: var(--sea-deep);
 }
 
 .hero {
@@ -974,5 +1142,18 @@ button {
 
   .tab-progress {
     font-size: 0.68rem;
+  }
+
+  .trip-row {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .trip-row-actions {
+    padding-top: 0;
+  }
+
+  .trips-hero {
+    padding-top: clamp(2.5rem, 8vh, 4rem);
   }
 }

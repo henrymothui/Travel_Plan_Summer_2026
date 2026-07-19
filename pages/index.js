@@ -1,9 +1,7 @@
 import Head from "next/head";
+import Link from "next/link";
 import { Fraunces, Outfit } from "next/font/google";
 import { useEffect, useState } from "react";
-import { days as seedDays, trip, typeLabels } from "../data/itinerary";
-
-const DONE_KEY = "central-coast-itinerary-done";
 
 const display = Fraunces({
   subsets: ["latin"],
@@ -15,79 +13,19 @@ const sans = Outfit({
   variable: "--font-sans",
 });
 
-const TYPE_OPTIONS = Object.keys(typeLabels);
-
-const emptyForm = {
-  time: "12:00",
-  type: "sightseeing",
+const emptyTripForm = {
+  brand: "",
   title: "",
-  detail: "",
+  subtitle: "",
+  dates: "",
+  route: "",
+  hotels: "",
 };
 
-function createId() {
-  return `a-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
-}
-
-function withActivityIds(sourceDays) {
-  return sourceDays.map((day) => ({
-    ...day,
-    activities: day.activities.map((item, index) => ({
-      ...item,
-      id: item.id ?? `${day.id}-${index}`,
-    })),
-  }));
-}
-
-function activityKey(dayId, activityId) {
-  return `${dayId}::${activityId}`;
-}
-
-/** Parse "09:20 AM" / "2:00 PM" into minutes since midnight. */
-function parseTimeToMinutes(timeStr) {
-  const match = String(timeStr)
-    .trim()
-    .match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
-  if (!match) return 0;
-  let hours = Number(match[1]);
-  const minutes = Number(match[2]);
-  const period = match[3].toUpperCase();
-  if (period === "AM") {
-    if (hours === 12) hours = 0;
-  } else if (hours !== 12) {
-    hours += 12;
-  }
-  return hours * 60 + minutes;
-}
-
-/** "14:30" (input[type=time]) → "02:30 PM" */
-function timeInputToDisplay(value) {
-  if (!value || !/^\d{2}:\d{2}$/.test(value)) return "12:00 PM";
-  let hours = Number(value.slice(0, 2));
-  const minutes = value.slice(3, 5);
-  const period = hours >= 12 ? "PM" : "AM";
-  hours = hours % 12;
-  if (hours === 0) hours = 12;
-  return `${String(hours).padStart(2, "0")}:${minutes} ${period}`;
-}
-
-/** "09:20 AM" → "09:20" for input[type=time] */
-function displayToTimeInput(displayTime) {
-  const minutes = parseTimeToMinutes(displayTime);
-  const hours = Math.floor(minutes / 60);
-  const mins = minutes % 60;
-  return `${String(hours).padStart(2, "0")}:${String(mins).padStart(2, "0")}`;
-}
-
-function sortActivities(activities) {
-  return [...activities].sort(
-    (a, b) => parseTimeToMinutes(a.time) - parseTimeToMinutes(b.time),
-  );
-}
-
-function ActivityForm({ title, values, onChange, onSubmit, onCancel, submitLabel, saving }) {
+function TripForm({ title, values, onChange, onSubmit, onCancel, submitLabel, saving }) {
   return (
     <form
-      className="activity-form"
+      className="activity-form trip-form"
       onSubmit={(event) => {
         event.preventDefault();
         onSubmit();
@@ -96,28 +34,26 @@ function ActivityForm({ title, values, onChange, onSubmit, onCancel, submitLabel
       <p className="form-title">{title}</p>
       <div className="form-grid">
         <label className="form-field">
-          <span>Time</span>
+          <span>Brand</span>
           <input
-            type="time"
-            required
-            value={values.time}
-            onChange={(event) => onChange({ ...values, time: event.target.value })}
+            type="text"
+            maxLength={80}
+            value={values.brand}
+            onChange={(event) => onChange({ ...values, brand: event.target.value })}
+            placeholder="e.g. Central Coast"
             disabled={saving}
           />
         </label>
         <label className="form-field">
-          <span>Type</span>
-          <select
-            value={values.type}
-            onChange={(event) => onChange({ ...values, type: event.target.value })}
+          <span>Dates</span>
+          <input
+            type="text"
+            maxLength={80}
+            value={values.dates}
+            onChange={(event) => onChange({ ...values, dates: event.target.value })}
+            placeholder="e.g. August 8 – 12"
             disabled={saving}
-          >
-            {TYPE_OPTIONS.map((type) => (
-              <option key={type} value={type}>
-                {typeLabels[type]}
-              </option>
-            ))}
-          </select>
+          />
         </label>
         <label className="form-field form-field-full">
           <span>Title</span>
@@ -127,18 +63,40 @@ function ActivityForm({ title, values, onChange, onSubmit, onCancel, submitLabel
             maxLength={120}
             value={values.title}
             onChange={(event) => onChange({ ...values, title: event.target.value })}
-            placeholder="What happens?"
+            placeholder="Trip name"
             disabled={saving}
           />
         </label>
         <label className="form-field form-field-full">
-          <span>Details</span>
+          <span>Subtitle</span>
           <textarea
-            rows={3}
+            rows={2}
             maxLength={400}
-            value={values.detail}
-            onChange={(event) => onChange({ ...values, detail: event.target.value })}
-            placeholder="Notes, address, duration…"
+            value={values.subtitle}
+            onChange={(event) => onChange({ ...values, subtitle: event.target.value })}
+            placeholder="Short description"
+            disabled={saving}
+          />
+        </label>
+        <label className="form-field form-field-full">
+          <span>Route</span>
+          <input
+            type="text"
+            maxLength={160}
+            value={values.route}
+            onChange={(event) => onChange({ ...values, route: event.target.value })}
+            placeholder="e.g. Ha Noi → Hue → Da Nang"
+            disabled={saving}
+          />
+        </label>
+        <label className="form-field form-field-full">
+          <span>Hotels</span>
+          <input
+            type="text"
+            maxLength={160}
+            value={values.hotels}
+            onChange={(event) => onChange({ ...values, hotels: event.target.value })}
+            placeholder="Where you’re staying"
             disabled={saving}
           />
         </label>
@@ -160,11 +118,8 @@ function ActivityForm({ title, values, onChange, onSubmit, onCancel, submitLabel
   );
 }
 
-export default function Home() {
-  const [activeId, setActiveId] = useState(seedDays[0].id);
-  const [animKey, setAnimKey] = useState(0);
-  const [days, setDays] = useState(() => withActivityIds(seedDays));
-  const [completed, setCompleted] = useState({});
+export default function TripsHome() {
+  const [trips, setTrips] = useState([]);
   const [hydrated, setHydrated] = useState(false);
   const [loadError, setLoadError] = useState("");
   const [canEdit, setCanEdit] = useState(false);
@@ -175,41 +130,27 @@ export default function Home() {
   const [unlockSuccess, setUnlockSuccess] = useState(false);
   const [unlockBuzz, setUnlockBuzz] = useState(false);
   const [formMode, setFormMode] = useState(null);
-  const [formValues, setFormValues] = useState(emptyForm);
+  const [formValues, setFormValues] = useState(emptyTripForm);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
-
-  const active = days.find((d) => d.id === activeId) ?? days[0];
 
   useEffect(() => {
     let cancelled = false;
 
     async function load() {
       try {
-        const rawDone = window.localStorage.getItem(DONE_KEY);
-        if (rawDone) {
-          const parsed = JSON.parse(rawDone);
-          if (parsed && typeof parsed === "object") {
-            setCompleted(parsed);
-          }
-        }
-      } catch {
-        // Ignore corrupted storage
-      }
-
-      try {
-        const res = await fetch("/api/itinerary");
+        const res = await fetch("/api/trips");
         const data = await res.json();
         if (!res.ok) {
-          throw new Error(data.error || "Failed to load itinerary");
+          throw new Error(data.error || "Failed to load trips");
         }
-        if (!cancelled && Array.isArray(data.days) && data.days.length) {
-          setDays(withActivityIds(data.days));
+        if (!cancelled) {
+          setTrips(Array.isArray(data.trips) ? data.trips : []);
           setCanEdit(Boolean(data.unlocked));
         }
       } catch (error) {
         if (!cancelled) {
-          setLoadError(error.message || "Failed to load shared itinerary");
+          setLoadError(error.message || "Failed to load trips");
         }
       } finally {
         if (!cancelled) setHydrated(true);
@@ -221,21 +162,6 @@ export default function Home() {
       cancelled = true;
     };
   }, []);
-
-  useEffect(() => {
-    if (!hydrated) return;
-    try {
-      window.localStorage.setItem(DONE_KEY, JSON.stringify(completed));
-    } catch {
-      // Ignore quota / private mode failures
-    }
-  }, [completed, hydrated]);
-
-  useEffect(() => {
-    setAnimKey((k) => k + 1);
-    setFormMode(null);
-    setSaveError("");
-  }, [activeId]);
 
   useEffect(() => {
     if (!unlockSuccess) return;
@@ -253,46 +179,6 @@ export default function Home() {
     const timer = setTimeout(() => setUnlockBuzz(false), 450);
     return () => clearTimeout(timer);
   }, [unlockBuzz]);
-
-  function selectDay(id) {
-    setActiveId(id);
-  }
-
-  function scrollToItinerary() {
-    document.getElementById("itinerary")?.scrollIntoView({ behavior: "smooth" });
-  }
-
-  function toggleActivity(key) {
-    setCompleted((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
-  }
-
-  function openAddForm() {
-    if (!canEdit) return;
-    setSaveError("");
-    setFormMode({ mode: "add" });
-    setFormValues(emptyForm);
-  }
-
-  function openEditForm(item) {
-    if (!canEdit) return;
-    setSaveError("");
-    setFormMode({ mode: "edit", activityId: item.id });
-    setFormValues({
-      time: displayToTimeInput(item.time),
-      type: item.type,
-      title: item.title,
-      detail: item.detail,
-    });
-  }
-
-  function closeForm() {
-    setFormMode(null);
-    setFormValues(emptyForm);
-    setSaveError("");
-  }
 
   async function unlockEdit(event) {
     event.preventDefault();
@@ -345,175 +231,183 @@ export default function Home() {
     }
   }
 
+  function openCreateForm() {
+    if (!canEdit) return;
+    setSaveError("");
+    setFormMode({ mode: "create" });
+    setFormValues(emptyTripForm);
+  }
+
+  function openEditForm(trip) {
+    if (!canEdit) return;
+    setSaveError("");
+    setFormMode({ mode: "edit", tripId: trip.id });
+    setFormValues({
+      brand: trip.brand || "",
+      title: trip.title || "",
+      subtitle: trip.subtitle || "",
+      dates: trip.dates || "",
+      route: trip.route || "",
+      hotels: trip.hotels || "",
+    });
+  }
+
+  function closeForm() {
+    setFormMode(null);
+    setFormValues(emptyTripForm);
+    setSaveError("");
+  }
+
   async function saveForm() {
-    const title = formValues.title.trim();
-    const detail = formValues.detail.trim();
     if (!canEdit) {
       setSaveError("Unlock required to save changes");
       return;
     }
-    if (!title || !formValues.time) {
-      setSaveError("Title and time are required");
+
+    const title = formValues.title.trim();
+    if (!title) {
+      setSaveError("Title is required");
       return;
     }
 
-    const nextItem = {
-      time: timeInputToDisplay(formValues.time),
-      type: formValues.type,
+    const payload = {
+      brand: formValues.brand.trim() || "Trip",
       title,
-      detail,
+      subtitle: formValues.subtitle.trim(),
+      dates: formValues.dates.trim(),
+      route: formValues.route.trim(),
+      hotels: formValues.hotels.trim(),
     };
-
-    const nextDays = days.map((day) => {
-      if (day.id !== activeId) return day;
-
-      let activities;
-      if (formMode?.mode === "edit") {
-        activities = day.activities.map((item) =>
-          item.id === formMode.activityId ? { ...item, ...nextItem } : item,
-        );
-      } else {
-        activities = [...day.activities, { ...nextItem, id: createId() }];
-      }
-
-      return { ...day, activities: sortActivities(activities) };
-    });
 
     setSaving(true);
     setSaveError("");
     try {
-      const res = await fetch("/api/itinerary", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ days: nextDays }),
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        if (res.status === 401) {
-          setCanEdit(false);
+      if (formMode?.mode === "edit") {
+        const res = await fetch(`/api/trips/${formMode.tripId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          if (res.status === 401) setCanEdit(false);
+          throw new Error(data.error || "Failed to save trip");
         }
-        throw new Error(data.error || "Failed to save");
+        const summary = data.summary ?? data.trip;
+        setTrips((prev) =>
+          prev
+            .map((trip) =>
+              trip.id === formMode.tripId
+                ? {
+                    ...trip,
+                    ...summary,
+                    dayCount: summary.dayCount ?? trip.dayCount,
+                  }
+                : trip,
+            )
+            .sort((a, b) => (b.updatedAt ?? 0) - (a.updatedAt ?? 0)),
+        );
+      } else {
+        const res = await fetch("/api/trips", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          if (res.status === 401) setCanEdit(false);
+          throw new Error(data.error || "Failed to create trip");
+        }
+        const created = data.trip;
+        setTrips((prev) => [
+          {
+            id: created.id,
+            brand: created.brand,
+            title: created.title,
+            subtitle: created.subtitle,
+            dates: created.dates,
+            route: created.route,
+            hotels: created.hotels,
+            dayCount: Array.isArray(created.days) ? created.days.length : 1,
+            updatedAt: created.updatedAt,
+          },
+          ...prev,
+        ]);
       }
-      setDays(withActivityIds(data.days ?? nextDays));
       closeForm();
     } catch (error) {
-      setSaveError(error.message || "Failed to save changes");
+      setSaveError(error.message || "Failed to save trip");
     } finally {
       setSaving(false);
     }
   }
 
-  async function deleteActivity(item) {
-    if (!canEdit || !item?.id) return;
-    const confirmed = window.confirm(`Delete “${item.title}”?`);
+  async function deleteTrip(trip) {
+    if (!canEdit || !trip?.id) return;
+    const confirmed = window.confirm(
+      `Delete “${trip.title}”? This removes the whole itinerary.`,
+    );
     if (!confirmed) return;
-
-    const nextDays = days.map((day) => {
-      if (day.id !== activeId) return day;
-      return {
-        ...day,
-        activities: day.activities.filter((activity) => activity.id !== item.id),
-      };
-    });
 
     setSaving(true);
     setSaveError("");
     try {
-      const res = await fetch("/api/itinerary", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ days: nextDays }),
-      });
-      const data = await res.json();
+      const res = await fetch(`/api/trips/${trip.id}`, { method: "DELETE" });
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        if (res.status === 401) {
-          setCanEdit(false);
-        }
-        throw new Error(data.error || "Failed to delete");
+        if (res.status === 401) setCanEdit(false);
+        throw new Error(data.error || "Failed to delete trip");
       }
-      setDays(withActivityIds(data.days ?? nextDays));
-      setCompleted((prev) => {
-        const next = { ...prev };
-        delete next[activityKey(activeId, item.id)];
-        return next;
-      });
-      if (formMode?.mode === "edit" && formMode.activityId === item.id) {
+      setTrips((prev) => prev.filter((item) => item.id !== trip.id));
+      if (formMode?.mode === "edit" && formMode.tripId === trip.id) {
         closeForm();
       }
     } catch (error) {
-      setSaveError(error.message || "Failed to delete item");
+      setSaveError(error.message || "Failed to delete trip");
     } finally {
       setSaving(false);
     }
   }
 
-  const dayDoneCount = active.activities.filter((item) =>
-    completed[activityKey(active.id, item.id)],
-  ).length;
-  const dayTotal = active.activities.length;
-  const isAdding = formMode?.mode === "add";
+  const isCreating = formMode?.mode === "create";
 
   return (
     <>
       <Head>
-        <title>{`${trip.brand} · ${trip.title}`}</title>
-        <meta name="description" content={trip.subtitle} />
+        <title>Trips · Itinerary</title>
+        <meta
+          name="description"
+          content="Choose a trip or create a new itinerary."
+        />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
       <div className={`${display.variable} ${sans.variable} page`}>
         <div className="atmosphere" aria-hidden="true" />
 
-        <header className="hero">
-          <div className="hero-media" aria-hidden="true">
-            <div className="hero-photo hero-photo-hue">
-              <img
-                src="/images/hue.jpg"
-                alt=""
-                width={1800}
-                height={1197}
-                decoding="async"
-              />
-            </div>
-            <div className="hero-photo hero-photo-danang">
-              <img
-                src="/images/danang-coast.jpg"
-                alt=""
-                width={1800}
-                height={1348}
-                decoding="async"
-              />
-            </div>
-            <div className="hero-veil" />
-          </div>
-
-          <div className="hero-copy">
-            <p className="brand">{trip.brand}</p>
-            <h1 className="hero-title">{trip.title}</h1>
-            <p className="hero-lede">{trip.subtitle}</p>
-            <div className="hero-meta">
-              <span>{trip.dates}</span>
-              <span className="dot" aria-hidden="true" />
-              <span>{trip.route}</span>
-              <span className="dot" aria-hidden="true" />
-              <span>{trip.hotels}</span>
-            </div>
-            <button type="button" className="cta" onClick={scrollToItinerary}>
-              Open the itinerary
-            </button>
+        <header className="trips-hero">
+          <div className="trips-hero-copy">
+            <p className="trips-kicker">Shared itineraries</p>
+            <h1 className="trips-brand">Trips</h1>
+            <p className="trips-lede">
+              Pick a trip to open its day-by-day plan, or unlock to create and
+              edit itineraries.
+            </p>
           </div>
         </header>
 
-        <main id="itinerary" className="itinerary">
+        <main className="trips-main">
           <div className="section-head section-head-row">
             <div>
-              <h2>Day by day</h2>
+              <h2>Your trips</h2>
               <p>
-                Choose a day to see times, transport, meals, and stops. Tick items as
-                you go — your checkmarks stay on this device. Shared edits require an
-                unlock PIN.
+                Open a trip to view the itinerary. Unlock with the shared PIN to
+                create, edit, or delete trips.
               </p>
               {loadError ? <p className="inline-error">{loadError}</p> : null}
+              {saveError && !formMode ? (
+                <p className="inline-error">{saveError}</p>
+              ) : null}
             </div>
             <div className="edit-access">
               {canEdit ? (
@@ -565,7 +459,7 @@ export default function Home() {
                 ) : (
                   <>
                     <p className="unlock-dialog-lede">
-                      Enter the shared PIN to add or edit itinerary items.
+                      Enter the shared PIN to create or edit trips.
                     </p>
                     <label className="form-field">
                       Edit PIN
@@ -605,157 +499,114 @@ export default function Home() {
             </div>
           ) : null}
 
-          <div className="tabs" role="tablist" aria-label="Trip days">
-            {days.map((day) => {
-              const selected = day.id === activeId;
-              const done = day.activities.filter(
-                (item) => completed[activityKey(day.id, item.id)],
-              ).length;
-              return (
-                <button
-                  key={day.id}
-                  type="button"
-                  role="tab"
-                  aria-selected={selected}
-                  className={`tab${selected ? " is-active" : ""}`}
-                  onClick={() => selectDay(day.id)}
-                >
-                  <span className="tab-label">{day.label}</span>
-                  <span className="tab-date">{day.date}</span>
-                  <span className="tab-city">{day.city}</span>
-                  <span className="tab-progress">
-                    {done}/{day.activities.length}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-
-          <section
-            key={animKey}
-            className="day-panel"
-            role="tabpanel"
-            aria-label={`${active.label}: ${active.theme}`}
-          >
-            <div className="day-intro">
-              <p className="day-kicker">
-                {active.label} · {active.date} · {active.city}
-              </p>
-              <h3>{active.theme}</h3>
-              <p className="day-summary">{active.summary}</p>
-              <p className="day-progress" aria-live="polite">
-                {dayDoneCount} of {dayTotal} completed
-              </p>
-              {saveError ? <p className="inline-error">{saveError}</p> : null}
-            </div>
-
-            <ol className="timeline">
-              {active.activities.map((item, index) => {
-                const key = activityKey(active.id, item.id);
-                const isDone = Boolean(completed[key]);
+          {!hydrated ? (
+            <p className="trips-empty">Loading trips…</p>
+          ) : trips.length === 0 && !isCreating ? (
+            <p className="trips-empty">No trips yet. Unlock to create one.</p>
+          ) : (
+            <ul className="trip-list">
+              {trips.map((trip, index) => {
                 const isEditing =
                   canEdit &&
                   formMode?.mode === "edit" &&
-                  formMode.activityId === item.id;
+                  formMode.tripId === trip.id;
 
                 return (
                   <li
-                    key={item.id}
-                    className={`timeline-item${isDone ? " is-done" : ""}${
-                      isEditing ? " is-editing" : ""
-                    }`}
-                    style={{ animationDelay: `${index * 45}ms` }}
+                    key={trip.id}
+                    className={`trip-row${isEditing ? " is-editing" : ""}`}
+                    style={{ animationDelay: `${index * 50}ms` }}
                   >
                     {isEditing ? (
                       <>
-                        <time className="time">{timeInputToDisplay(formValues.time)}</time>
-                        <ActivityForm
-                          title="Edit item"
+                        {saveError ? (
+                          <p className="inline-error">{saveError}</p>
+                        ) : null}
+                        <TripForm
+                          title="Edit trip"
                           values={formValues}
                           onChange={setFormValues}
                           onSubmit={saveForm}
                           onCancel={closeForm}
-                          submitLabel="Save changes"
+                          submitLabel="Save trip"
                           saving={saving}
                         />
                       </>
                     ) : (
                       <>
-                        <time className="time">{item.time}</time>
-                        <div className="activity-row">
-                          <label className="check">
-                            <input
-                              type="checkbox"
-                              checked={isDone}
-                              onChange={() => toggleActivity(key)}
-                              aria-label={`Mark complete: ${item.title}`}
-                            />
-                            <span className="check-box" aria-hidden="true" />
-                          </label>
-                          <div className="activity">
-                            <div className="activity-top">
-                              <span className={`type type-${item.type}`}>
-                                {typeLabels[item.type]}
-                              </span>
-                              {canEdit ? (
-                                <div className="activity-actions">
-                                  <button
-                                    type="button"
-                                    className="btn-edit"
-                                    onClick={() => openEditForm(item)}
-                                    disabled={saving}
-                                  >
-                                    Edit
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className="btn-delete"
-                                    onClick={() => deleteActivity(item)}
-                                    disabled={saving}
-                                  >
-                                    Delete
-                                  </button>
-                                </div>
-                              ) : null}
-                            </div>
-                            <h4>{item.title}</h4>
-                            <p>{item.detail}</p>
+                        <Link href={`/trips/${trip.id}`} className="trip-link">
+                          <span className="trip-link-brand">
+                            {trip.brand || "Trip"}
+                          </span>
+                          <span className="trip-link-title">{trip.title}</span>
+                          {trip.subtitle ? (
+                            <span className="trip-link-subtitle">
+                              {trip.subtitle}
+                            </span>
+                          ) : null}
+                          <span className="trip-link-meta">
+                            {trip.dates ? <span>{trip.dates}</span> : null}
+                            {trip.dates && trip.dayCount ? (
+                              <span className="dot" aria-hidden="true" />
+                            ) : null}
+                            <span>
+                              {trip.dayCount}{" "}
+                              {trip.dayCount === 1 ? "day" : "days"}
+                            </span>
+                          </span>
+                        </Link>
+                        {canEdit ? (
+                          <div className="trip-row-actions">
+                            <button
+                              type="button"
+                              className="btn-edit"
+                              onClick={() => openEditForm(trip)}
+                              disabled={saving}
+                            >
+                              Edit
+                            </button>
+                            <button
+                              type="button"
+                              className="btn-delete"
+                              onClick={() => deleteTrip(trip)}
+                              disabled={saving}
+                            >
+                              Delete
+                            </button>
                           </div>
-                        </div>
+                        ) : null}
                       </>
                     )}
                   </li>
                 );
               })}
-            </ol>
+            </ul>
+          )}
 
-            {canEdit ? (
-              isAdding ? (
-                <div className="add-form-wrap">
-                  {saveError ? <p className="inline-error">{saveError}</p> : null}
-                  <ActivityForm
-                    title="Add item"
-                    values={formValues}
-                    onChange={setFormValues}
-                    onSubmit={saveForm}
-                    onCancel={closeForm}
-                    submitLabel="Add to day"
-                    saving={saving}
-                  />
-                </div>
-              ) : (
-                <button type="button" className="btn-add" onClick={openAddForm}>
-                  Add item
-                </button>
-              )
-            ) : null}
-          </section>
+          {canEdit ? (
+            isCreating ? (
+              <div className="add-form-wrap">
+                {saveError ? <p className="inline-error">{saveError}</p> : null}
+                <TripForm
+                  title="New trip"
+                  values={formValues}
+                  onChange={setFormValues}
+                  onSubmit={saveForm}
+                  onCancel={closeForm}
+                  submitLabel="Create trip"
+                  saving={saving}
+                />
+              </div>
+            ) : (
+              <button type="button" className="btn-add" onClick={openCreateForm}>
+                Create trip
+              </button>
+            )
+          ) : null}
         </main>
 
         <footer className="footer">
-          <p>
-            {trip.brand} · {trip.dates}
-          </p>
+          <p>Shared itineraries · Unlock to edit</p>
         </footer>
       </div>
     </>

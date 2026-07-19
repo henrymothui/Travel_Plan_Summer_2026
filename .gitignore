@@ -17,6 +17,7 @@ dist
 
 # local itinerary persistence (dev fallback without Redis)
 data/itinerary.local.json
+data/trips.local.json
 
 # logs / debug
 npm-debug.log*
