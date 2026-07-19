@@ -1,0 +1,368 @@
+export const trip = {
+  brand: "Central Coast",
+  title: "Hue to Da Nang",
+  subtitle: "Five days along the Perfume River and the East Sea — citadels, beaches, and slow evenings.",
+  dates: "August 8 – 12",
+  route: "Ha Noi → Hue → Da Nang → Ha Noi",
+  hotels: "Senna Hue · Stella Maris Beach Danang",
+};
+
+export const days = [
+  {
+    id: "day1",
+    label: "Day 1",
+    date: "Aug 8",
+    city: "Hue",
+    theme: "Arrival in Hue",
+    summary:
+      "Fly into Hue, check in at Senna Hue, then explore the Imperial City and a night on the Perfume River.",
+    activities: [
+      {
+        time: "09:20 AM",
+        type: "transport",
+        title: "Depart Ha Noi for Hue",
+        detail: "Flight VJ563 · Arrive Phu Bai Airport 10:35 AM",
+      },
+      {
+        time: "10:50 AM",
+        type: "transport",
+        title: "Taxi to Senna Hue",
+        detail: "From Phu Bai Airport (HUI) · ~15 km · About 25–35 minutes",
+      },
+      {
+        time: "11:20 AM",
+        type: "sightseeing",
+        title: "Check in · Senna Hue",
+        detail: "07 Nguyen Tri Phuong · Settle in and freshen up",
+      },
+      {
+        time: "12:00 PM",
+        type: "food",
+        title: "Lunch at Madam Thu",
+        detail: "Reservation confirmed · About 5–10 minutes from the hotel",
+      },
+      {
+        time: "02:00 PM",
+        type: "transport",
+        title: "To the Imperial City",
+        detail: "Walk or taxi · ~1.6 km · About 8–10 minutes by car",
+      },
+      {
+        time: "02:15 PM",
+        type: "sightseeing",
+        title: "Imperial City (Old Citadel)",
+        detail: "Explore the architecture · About 2 hours",
+      },
+      {
+        time: "06:00 PM",
+        type: "food",
+        title: "Dinner — traditional Vietnamese",
+        detail: "Near Senna Hue / Le Loi · Usually 5–10 minutes",
+      },
+      {
+        time: "08:00 PM",
+        type: "transport",
+        title: "To the Perfume River pier",
+        detail: "Near Truong Tien · Walk or taxi · About 5–10 minutes",
+      },
+      {
+        time: "08:10 PM",
+        type: "sightseeing",
+        title: "Cultural show on the Perfume River",
+        detail: "Evening performance · About 2 hours",
+      },
+      {
+        time: "10:00 PM",
+        type: "rest",
+        title: "Overnight at Senna Hue",
+        detail: "Return to the hotel",
+      },
+    ],
+  },
+  {
+    id: "day2",
+    label: "Day 2",
+    date: "Aug 9",
+    city: "Hue",
+    theme: "Cultural exploration",
+    summary:
+      "Mausoleums, pagodas, Nem Lui, and markets — a full day based at Senna Hue.",
+    activities: [
+      {
+        time: "08:00 AM",
+        type: "food",
+        title: "Breakfast at Senna Hue",
+        detail: "Start the day on-site",
+      },
+      {
+        time: "09:00 AM",
+        type: "transport",
+        title: "Taxi to Khai Dinh Mausoleum",
+        detail: "~10–12 km south · About 25–30 minutes",
+      },
+      {
+        time: "09:30 AM",
+        type: "sightseeing",
+        title: "Khai Dinh Mausoleum",
+        detail: "Visit · About 1.5 hours",
+      },
+      {
+        time: "11:00 AM",
+        type: "transport",
+        title: "Taxi to Thien Mu Pagoda",
+        detail: "About 20–25 minutes",
+      },
+      {
+        time: "11:25 AM",
+        type: "sightseeing",
+        title: "Thien Mu Pagoda",
+        detail: "Visit · About 1 hour",
+      },
+      {
+        time: "12:30 PM",
+        type: "food",
+        title: "Lunch — Nem Lui",
+        detail: "City-center spot · Taxi from Thien Mu about 15–20 minutes",
+      },
+      {
+        time: "02:00 PM",
+        type: "sightseeing",
+        title: "Perfume River bike or boat",
+        detail: "Optional ride or boat tour · About 2 hours",
+      },
+      {
+        time: "04:15 PM",
+        type: "transport",
+        title: "Taxi to Dong Ba / markets",
+        detail: "About 10–15 minutes from the river / center",
+      },
+      {
+        time: "04:30 PM",
+        type: "shopping",
+        title: "Markets & local shops",
+        detail: "Browse and pick up souvenirs · About 1.5 hours",
+      },
+      {
+        time: "06:30 PM",
+        type: "food",
+        title: "Dinner",
+        detail: "Near Senna Hue · About 5–10 minutes",
+      },
+      {
+        time: "08:00 PM",
+        type: "rest",
+        title: "Return to Senna Hue",
+        detail: "Overnight in Hue",
+      },
+    ],
+  },
+  {
+    id: "day3",
+    label: "Day 3",
+    date: "Aug 10",
+    city: "Da Nang",
+    theme: "Travel to Da Nang",
+    summary:
+      "Train south to Stella Maris on My Khe Beach, then an evening by Dragon Bridge.",
+    activities: [
+      {
+        time: "08:00 AM",
+        type: "food",
+        title: "Breakfast at Senna Hue",
+        detail: "Fuel up before the train",
+      },
+      {
+        time: "08:40 AM",
+        type: "transport",
+        title: "Taxi to Hue Railway Station",
+        detail: "~2.3 km · About 8–12 minutes",
+      },
+      {
+        time: "09:00 AM",
+        type: "transport",
+        title: "Hue → Da Nang by train",
+        detail: "SE3 / HD01 via Hai Van Pass · About 2.5–3 hours",
+      },
+      {
+        time: "11:45 AM",
+        type: "transport",
+        title: "Taxi to Stella Maris",
+        detail: "From Da Nang Station · ~4–6 km · About 12–15 minutes",
+      },
+      {
+        time: "12:00 PM",
+        type: "sightseeing",
+        title: "Check in · Stella Maris Beach Danang",
+        detail: "3 Vo Van Kiet, Son Tra · Beachfront on My Khe",
+      },
+      {
+        time: "12:30 PM",
+        type: "food",
+        title: "Seafood lunch",
+        detail: "My Khe strip · Usually 5–10 minutes walk or taxi",
+      },
+      {
+        time: "02:00 PM",
+        type: "sightseeing",
+        title: "My Khe Beach",
+        detail: "Hotel is beachfront · About 3-minute walk",
+      },
+      {
+        time: "05:00 PM",
+        type: "food",
+        title: "Dinner by the beach",
+        detail: "Beachside restaurant near Stella Maris",
+      },
+      {
+        time: "07:00 PM",
+        type: "transport",
+        title: "Taxi to Dragon Bridge",
+        detail: "About 8–12 minutes in typical traffic",
+      },
+      {
+        time: "07:15 PM",
+        type: "sightseeing",
+        title: "Dragon Bridge",
+        detail: "Optional visit if the show is running",
+      },
+      {
+        time: "09:30 PM",
+        type: "rest",
+        title: "Overnight at Stella Maris",
+        detail: "Return to the hotel",
+      },
+    ],
+  },
+  {
+    id: "day4",
+    label: "Day 4",
+    date: "Aug 11",
+    city: "Da Nang",
+    theme: "Leisure & exploration",
+    summary:
+      "Marble Mountains, Son Tra Peninsula, beach time at Stella Maris, Mi Quang, and night markets.",
+    activities: [
+      {
+        time: "08:00 AM",
+        type: "food",
+        title: "Breakfast at Stella Maris",
+        detail: "Start fresh in Da Nang",
+      },
+      {
+        time: "09:00 AM",
+        type: "transport",
+        title: "Taxi to Marble Mountains",
+        detail: "~11–12 km south · About 20–25 minutes",
+      },
+      {
+        time: "09:25 AM",
+        type: "sightseeing",
+        title: "Marble Mountains",
+        detail: "Caves, pagodas, and viewpoints · About 2 hours",
+      },
+      {
+        time: "12:00 PM",
+        type: "food",
+        title: "Lunch",
+        detail: "Near Ngu Hanh Son / Non Nuoc street-food area",
+      },
+      {
+        time: "01:30 PM",
+        type: "transport",
+        title: "Taxi to Son Tra Peninsula",
+        detail: "e.g. Linh Ung Pagoda · About 30–40 minutes from Marble Mountains",
+      },
+      {
+        time: "02:15 PM",
+        type: "sightseeing",
+        title: "Son Tra Peninsula",
+        detail: "Coastal viewpoints and nature · About 2 hours",
+      },
+      {
+        time: "04:30 PM",
+        type: "transport",
+        title: "Return to Stella Maris",
+        detail: "Back to My Khe · About 25–30 minutes",
+      },
+      {
+        time: "05:00 PM",
+        type: "sightseeing",
+        title: "Beach activities at My Khe",
+        detail: "Optional swim or walk · At the hotel",
+      },
+      {
+        time: "06:30 PM",
+        type: "food",
+        title: "Dinner — try Mi Quang",
+        detail: "My Khe / Han River area · About 5–15 minutes",
+      },
+      {
+        time: "08:00 PM",
+        type: "shopping",
+        title: "Night markets",
+        detail: "Han Market / riverside · Taxi about 10–15 minutes · Until ~10:00 PM",
+      },
+      {
+        time: "10:30 PM",
+        type: "rest",
+        title: "Overnight at Stella Maris",
+        detail: "Return to the hotel",
+      },
+    ],
+  },
+  {
+    id: "day5",
+    label: "Day 5",
+    date: "Aug 12",
+    city: "Da Nang",
+    theme: "Departure",
+    summary:
+      "A light morning at Stella Maris / My Khe, then a short transfer to the airport or station for Ha Noi.",
+    activities: [
+      {
+        time: "08:00 AM",
+        type: "food",
+        title: "Breakfast at Stella Maris",
+        detail: "Last morning meal of the trip",
+      },
+      {
+        time: "09:00 AM",
+        type: "sightseeing",
+        title: "Free morning",
+        detail: "Shopping, sightseeing, or My Khe Beach · Short walk from the hotel",
+      },
+      {
+        time: "12:00 PM",
+        type: "transport",
+        title: "Check out of Stella Maris",
+        detail: "Pack and settle the bill",
+      },
+      {
+        time: "12:15 PM",
+        type: "transport",
+        title: "Transfer to airport or station",
+        detail: "DAD Airport about 10–15 minutes · Station about 12–15 minutes",
+      },
+      {
+        time: "01:00 PM",
+        type: "transport",
+        title: "Da Nang → Ha Noi",
+        detail: "Flight VN456 (~1.5 hrs) or northbound train (~2–2.5 hrs)",
+      },
+      {
+        time: "03:30 PM",
+        type: "rest",
+        title: "Arrive in Ha Noi",
+        detail: "Trip concludes",
+      },
+    ],
+  },
+];
+
+export const typeLabels = {
+  transport: "Transport",
+  sightseeing: "Sightseeing",
+  food: "Food",
+  shopping: "Shopping",
+  rest: "Rest",
+};
