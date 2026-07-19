@@ -15,6 +15,9 @@ dist
 .env
 .env*.local
 
+# local itinerary persistence (dev fallback without Redis)
+data/itinerary.local.json
+
 # logs / debug
 npm-debug.log*
 yarn-debug.log*
