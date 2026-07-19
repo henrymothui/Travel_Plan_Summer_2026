@@ -410,7 +410,7 @@ export default function TripsHome() {
           content="Family trips — shared itineraries for traveling together."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/family-trips-mark.svg" type="image/svg+xml" />
+        <link rel="icon" href="/family-trips-mark.svg?v=2" type="image/svg+xml" />
       </Head>
 
       <div className={`${display.variable} ${sans.variable} page`}>
@@ -421,7 +421,7 @@ export default function TripsHome() {
             <div className="brand-lockup">
               <img
                 className="brand-mark"
-                src="/family-trips-mark.svg"
+                src="/family-trips-mark.svg?v=2"
                 alt=""
                 width={56}
                 height={56}
@@ -531,7 +531,7 @@ export default function TripsHome() {
           {!hydrated ? (
             <div className="trips-empty-state">
               <img
-                src="/family-trips-mark.svg"
+                src="/family-trips-mark.svg?v=2"
                 alt=""
                 width={40}
                 height={40}
@@ -542,7 +542,7 @@ export default function TripsHome() {
           ) : trips.length === 0 && !isCreating ? (
             <div className="trips-empty-state">
               <img
-                src="/family-trips-mark.svg"
+                src="/family-trips-mark.svg?v=2"
                 alt=""
                 width={40}
                 height={40}

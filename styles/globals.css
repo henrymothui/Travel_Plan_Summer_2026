@@ -277,17 +277,10 @@ button {
   margin-top: 0.25rem;
 }
 
-.back-inline {
-  display: inline-flex;
-  align-items: center;
-  margin-bottom: 0;
-}
-
 .product-bar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
   gap: 0.65rem 1rem;
   margin-bottom: 1rem;
 }

@@ -520,7 +520,7 @@ export default function TripPage() {
         <title>{pageTitle}</title>
         <meta name="description" content={trip.subtitle || trip.title} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/family-trips-mark.svg" type="image/svg+xml" />
+        <link rel="icon" href="/family-trips-mark.svg?v=2" type="image/svg+xml" />
       </Head>
 
       <div className={`${display.variable} ${sans.variable} page`}>
@@ -576,19 +576,16 @@ export default function TripPage() {
             <div className="product-bar">
               <Link href="/" className="product-chip">
                 <img
-                  src="/family-trips-mark.svg"
+                  src="/family-trips-mark.svg?v=2"
                   alt=""
                   width={22}
                   height={22}
                 />
                 <span>Family trips</span>
               </Link>
-              <Link href="/" className="text-action back-inline">
-                ← Return to trips
-              </Link>
             </div>
             <div className="section-head-row">
-              <h2>Day by day</h2>
+              <h2>Itinerary by day</h2>
               <div className="edit-access">
                 {canEdit ? (
                   <button
