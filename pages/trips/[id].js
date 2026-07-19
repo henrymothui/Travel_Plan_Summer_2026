@@ -583,9 +583,6 @@ export default function TripPage() {
                 />
                 <span>Family trips</span>
               </Link>
-            </div>
-            <div className="section-head-row">
-              <h2>Itinerary by day</h2>
               <div className="edit-access">
                 {canEdit ? (
                   <button
@@ -610,6 +607,9 @@ export default function TripPage() {
                   </button>
                 )}
               </div>
+            </div>
+            <div className="section-head-row">
+              <h2>Itinerary by day</h2>
             </div>
             {loadError ? <p className="inline-error">{loadError}</p> : null}
           </div>

@@ -417,7 +417,7 @@ export default function TripsHome() {
         <div className="atmosphere" aria-hidden="true" />
 
         <header className="trips-hero">
-          <div className="trips-hero-copy">
+          <div className="trips-hero-top">
             <div className="brand-lockup">
               <img
                 className="brand-mark"
@@ -428,12 +428,6 @@ export default function TripsHome() {
               />
               <h1 className="trips-brand">Family trips</h1>
             </div>
-          </div>
-        </header>
-
-        <main className="trips-main">
-          <div className="section-head section-head-row">
-            <h2 className="section-label">Shared Itineraries</h2>
             <div className="edit-access">
               {canEdit ? (
                 <button
@@ -458,6 +452,12 @@ export default function TripsHome() {
                 </button>
               )}
             </div>
+          </div>
+        </header>
+
+        <main className="trips-main">
+          <div className="section-head">
+            <h2 className="section-label">Shared Itineraries</h2>
           </div>
           {loadError ? <p className="inline-error">{loadError}</p> : null}
           {saveError && !formMode ? (

@@ -83,6 +83,15 @@ button {
   animation: rise 0.85s ease-out both;
 }
 
+.trips-hero-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.5rem;
+  animation: rise 0.85s ease-out both;
+}
+
 .brand-lockup {
   display: flex;
   align-items: center;
@@ -281,6 +290,7 @@ button {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
   gap: 0.65rem 1rem;
   margin-bottom: 1rem;
 }
