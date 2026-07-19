@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { Fraunces, Outfit } from "next/font/google";
 import { useEffect, useState } from "react";
 import { typeLabels } from "../../data/itinerary";
+import { getCoverPreset } from "../../lib/covers";
 
 const display = Fraunces({
   subsets: ["latin"],
@@ -32,6 +33,7 @@ const emptyTrip = {
   dates: "",
   route: "",
   hotels: "",
+  cover: "mist",
   days: [],
 };
 
@@ -295,10 +297,6 @@ export default function TripPage() {
     setActiveId(id);
   }
 
-  function scrollToItinerary() {
-    document.getElementById("itinerary")?.scrollIntoView({ behavior: "smooth" });
-  }
-
   function toggleActivity(key) {
     setCompleted((prev) => ({
       ...prev,
@@ -496,7 +494,7 @@ export default function TripPage() {
             </h1>
             <p className="trips-lede">This itinerary may have been deleted.</p>
             <Link href="/" className="cta" style={{ display: "inline-flex" }}>
-              ← Return to trips
+              ← Family trips
             </Link>
           </main>
         </div>
@@ -514,6 +512,7 @@ export default function TripPage() {
   const pageTitle = trip.brand
     ? `${trip.brand} · ${trip.title}`
     : trip.title || "Trip";
+  const cover = getCoverPreset(trip.cover, trip.id);
 
   return (
     <>
@@ -521,6 +520,7 @@ export default function TripPage() {
         <title>{pageTitle}</title>
         <meta name="description" content={trip.subtitle || trip.title} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/family-trips-mark.svg" type="image/svg+xml" />
       </Head>
 
       <div className={`${display.variable} ${sans.variable} page`}>
@@ -528,24 +528,24 @@ export default function TripPage() {
 
         <header className="hero">
           <div className="hero-media" aria-hidden="true">
-            <div className="hero-photo hero-photo-hue">
-              <img
-                src="/images/hue.jpg"
-                alt=""
-                width={1800}
-                height={1197}
-                decoding="async"
-              />
-            </div>
-            <div className="hero-photo hero-photo-danang">
-              <img
-                src="/images/danang-coast.jpg"
-                alt=""
-                width={1800}
-                height={1348}
-                decoding="async"
-              />
-            </div>
+            {cover.type === "photos" ? (
+              cover.images.map((image) => (
+                <div
+                  key={image.src}
+                  className={`hero-photo ${image.className}`}
+                >
+                  <img
+                    src={image.src}
+                    alt=""
+                    width={image.width}
+                    height={image.height}
+                    decoding="async"
+                  />
+                </div>
+              ))
+            ) : (
+              <div className={cover.heroClass} />
+            )}
             <div className="hero-veil" />
           </div>
 
@@ -568,57 +568,53 @@ export default function TripPage() {
                 {trip.hotels ? <span>{trip.hotels}</span> : null}
               </div>
             )}
-            <div className="hero-actions">
-              <Link href="/" className="cta cta-secondary">
-                ← Return to trips
-              </Link>
-              {days.length > 0 ? (
-                <button type="button" className="cta" onClick={scrollToItinerary}>
-                  Open the itinerary
-                </button>
-              ) : null}
-            </div>
           </div>
         </header>
 
         <main id="itinerary" className="itinerary">
-          <div className="section-head section-head-row">
-            <div>
-              <Link href="/" className="btn btn-ghost back-inline">
+          <div className="section-head">
+            <div className="product-bar">
+              <Link href="/" className="product-chip">
+                <img
+                  src="/family-trips-mark.svg"
+                  alt=""
+                  width={22}
+                  height={22}
+                />
+                <span>Family trips</span>
+              </Link>
+              <Link href="/" className="text-action back-inline">
                 ← Return to trips
               </Link>
+            </div>
+            <div className="section-head-row">
               <h2>Day by day</h2>
-              <p>
-                Choose a day to see times, transport, meals, and stops. Tick items as
-                you go — your checkmarks stay on this device. Shared edits require an
-                unlock PIN.
-              </p>
-              {loadError ? <p className="inline-error">{loadError}</p> : null}
+              <div className="edit-access">
+                {canEdit ? (
+                  <button
+                    type="button"
+                    className="text-action text-action-accent"
+                    onClick={lockEdit}
+                    disabled={authBusy}
+                  >
+                    Lock editing
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="text-action text-action-accent"
+                    onClick={() => {
+                      setShowUnlock(true);
+                      setAuthError("");
+                      setUnlockBuzz(false);
+                    }}
+                  >
+                    Unlock to edit
+                  </button>
+                )}
+              </div>
             </div>
-            <div className="edit-access">
-              {canEdit ? (
-                <button
-                  type="button"
-                  className="btn btn-ghost"
-                  onClick={lockEdit}
-                  disabled={authBusy}
-                >
-                  Lock editing
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  className="btn btn-ghost"
-                  onClick={() => {
-                    setShowUnlock(true);
-                    setAuthError("");
-                    setUnlockBuzz(false);
-                  }}
-                >
-                  Unlock to edit
-                </button>
-              )}
-            </div>
+            {loadError ? <p className="inline-error">{loadError}</p> : null}
           </div>
 
           {showUnlock && !canEdit ? (
@@ -695,9 +691,7 @@ export default function TripPage() {
                 className="tabs"
                 role="tablist"
                 aria-label="Trip days"
-                style={{
-                  gridTemplateColumns: `repeat(${Math.min(days.length, 5)}, minmax(0, 1fr))`,
-                }}
+                style={{ "--day-count": String(days.length) }}
               >
                 {days.map((day) => {
                   const selected = day.id === activeId;
@@ -801,7 +795,7 @@ export default function TripPage() {
                                       <div className="activity-actions">
                                         <button
                                           type="button"
-                                          className="btn-edit"
+                                          className="text-action"
                                           onClick={() => openEditForm(item)}
                                           disabled={saving}
                                         >
@@ -809,7 +803,7 @@ export default function TripPage() {
                                         </button>
                                         <button
                                           type="button"
-                                          className="btn-delete"
+                                          className="text-action text-action-danger"
                                           onClick={() => deleteActivity(item)}
                                           disabled={saving}
                                         >
@@ -848,10 +842,10 @@ export default function TripPage() {
                     ) : (
                       <button
                         type="button"
-                        className="btn-add"
+                        className="text-action text-action-create"
                         onClick={openAddForm}
                       >
-                        Add item
+                        + Add item
                       </button>
                     )
                   ) : null}
@@ -864,7 +858,7 @@ export default function TripPage() {
         <footer className="footer">
           <p>
             <Link href="/" className="footer-back">
-              ← Return to trips
+              Family trips
             </Link>
             {trip.brand || trip.dates
               ? ` · ${[trip.brand, trip.dates].filter(Boolean).join(" · ")}`

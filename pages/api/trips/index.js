@@ -51,6 +51,7 @@ export default async function handler(req, res) {
         dates: typeof body.dates === "string" ? body.dates.trim() : "",
         route: typeof body.route === "string" ? body.route.trim() : "",
         hotels: typeof body.hotels === "string" ? body.hotels.trim() : "",
+        cover: typeof body.cover === "string" ? body.cover : undefined,
       });
       return res.status(201).json({ trip, source });
     } catch (error) {

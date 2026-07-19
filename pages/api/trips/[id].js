@@ -57,7 +57,8 @@ export default async function handler(req, res) {
       body.subtitle !== undefined ||
       body.dates !== undefined ||
       body.route !== undefined ||
-      body.hotels !== undefined
+      body.hotels !== undefined ||
+      body.cover !== undefined
     ) {
       const meta = {
         brand: body.brand,
@@ -66,6 +67,7 @@ export default async function handler(req, res) {
         dates: body.dates,
         route: body.route,
         hotels: body.hotels,
+        cover: body.cover,
       };
       const metaError = validateTripMeta(meta, {
         requireTitle: body.title !== undefined,
@@ -85,6 +87,9 @@ export default async function handler(req, res) {
         if (typeof body[field] === "string") {
           patch[field] = body[field].trim();
         }
+      }
+      if (typeof body.cover === "string") {
+        patch.cover = body.cover;
       }
     }
 

@@ -2,6 +2,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { Fraunces, Outfit } from "next/font/google";
 import { useEffect, useState } from "react";
+import { COVER_KEYS, COVER_PRESETS, resolveCoverKey } from "../lib/covers";
 
 const display = Fraunces({
   subsets: ["latin"],
@@ -20,7 +21,19 @@ const emptyTripForm = {
   dates: "",
   route: "",
   hotels: "",
+  cover: "mist",
 };
+
+function CoverThumb({ cover, tripId, className = "" }) {
+  const key = resolveCoverKey(cover, tripId);
+  const preset = COVER_PRESETS[key];
+  return (
+    <span
+      className={`cover-thumb ${preset.thumbClass}${className ? ` ${className}` : ""}`}
+      aria-hidden="true"
+    />
+  );
+}
 
 function TripForm({ title, values, onChange, onSubmit, onCancel, submitLabel, saving }) {
   return (
@@ -99,6 +112,20 @@ function TripForm({ title, values, onChange, onSubmit, onCancel, submitLabel, sa
             placeholder="Where you’re staying"
             disabled={saving}
           />
+        </label>
+        <label className="form-field form-field-full">
+          <span>Cover</span>
+          <select
+            value={values.cover}
+            onChange={(event) => onChange({ ...values, cover: event.target.value })}
+            disabled={saving}
+          >
+            {COVER_KEYS.map((key) => (
+              <option key={key} value={key}>
+                {COVER_PRESETS[key].label}
+              </option>
+            ))}
+          </select>
         </label>
       </div>
       <div className="form-actions">
@@ -249,6 +276,7 @@ export default function TripsHome() {
       dates: trip.dates || "",
       route: trip.route || "",
       hotels: trip.hotels || "",
+      cover: resolveCoverKey(trip.cover, trip.id),
     });
   }
 
@@ -277,6 +305,7 @@ export default function TripsHome() {
       dates: formValues.dates.trim(),
       route: formValues.route.trim(),
       hotels: formValues.hotels.trim(),
+      cover: resolveCoverKey(formValues.cover),
     };
 
     setSaving(true);
@@ -328,6 +357,7 @@ export default function TripsHome() {
             dates: created.dates,
             route: created.route,
             hotels: created.hotels,
+            cover: created.cover,
             dayCount: Array.isArray(created.days) ? created.days.length : 1,
             updatedAt: created.updatedAt,
           },
@@ -374,12 +404,13 @@ export default function TripsHome() {
   return (
     <>
       <Head>
-        <title>Trips · Itinerary</title>
+        <title>Family trips · Shared itineraries</title>
         <meta
           name="description"
-          content="Choose a trip or create a new itinerary."
+          content="Family trips — shared itineraries for traveling together."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/family-trips-mark.svg" type="image/svg+xml" />
       </Head>
 
       <div className={`${display.variable} ${sans.variable} page`}>
@@ -387,33 +418,27 @@ export default function TripsHome() {
 
         <header className="trips-hero">
           <div className="trips-hero-copy">
-            <p className="trips-kicker">Shared itineraries</p>
-            <h1 className="trips-brand">Trips</h1>
-            <p className="trips-lede">
-              Pick a trip to open its day-by-day plan, or unlock to create and
-              edit itineraries.
-            </p>
+            <div className="brand-lockup">
+              <img
+                className="brand-mark"
+                src="/family-trips-mark.svg"
+                alt=""
+                width={56}
+                height={56}
+              />
+              <h1 className="trips-brand">Family trips</h1>
+            </div>
           </div>
         </header>
 
         <main className="trips-main">
           <div className="section-head section-head-row">
-            <div>
-              <h2>Your trips</h2>
-              <p>
-                Open a trip to view the itinerary. Unlock with the shared PIN to
-                create, edit, or delete trips.
-              </p>
-              {loadError ? <p className="inline-error">{loadError}</p> : null}
-              {saveError && !formMode ? (
-                <p className="inline-error">{saveError}</p>
-              ) : null}
-            </div>
+            <h2 className="section-label">Shared Itineraries</h2>
             <div className="edit-access">
               {canEdit ? (
                 <button
                   type="button"
-                  className="btn btn-ghost"
+                  className="text-action text-action-accent"
                   onClick={lockEdit}
                   disabled={authBusy}
                 >
@@ -422,7 +447,7 @@ export default function TripsHome() {
               ) : (
                 <button
                   type="button"
-                  className="btn btn-ghost"
+                  className="text-action text-action-accent"
                   onClick={() => {
                     setShowUnlock(true);
                     setAuthError("");
@@ -434,6 +459,10 @@ export default function TripsHome() {
               )}
             </div>
           </div>
+          {loadError ? <p className="inline-error">{loadError}</p> : null}
+          {saveError && !formMode ? (
+            <p className="inline-error">{saveError}</p>
+          ) : null}
 
           {showUnlock && !canEdit ? (
             <div
@@ -500,9 +529,31 @@ export default function TripsHome() {
           ) : null}
 
           {!hydrated ? (
-            <p className="trips-empty">Loading trips…</p>
+            <div className="trips-empty-state">
+              <img
+                src="/family-trips-mark.svg"
+                alt=""
+                width={40}
+                height={40}
+                className="empty-mark"
+              />
+              <p>Loading family trips…</p>
+            </div>
           ) : trips.length === 0 && !isCreating ? (
-            <p className="trips-empty">No trips yet. Unlock to create one.</p>
+            <div className="trips-empty-state">
+              <img
+                src="/family-trips-mark.svg"
+                alt=""
+                width={40}
+                height={40}
+                className="empty-mark"
+              />
+              <p>
+                {canEdit
+                  ? "No trips yet — create one for the family."
+                  : "No trips yet. Unlock to create one."}
+              </p>
+            </div>
           ) : (
             <ul className="trip-list">
               {trips.map((trip, index) => {
@@ -535,23 +586,26 @@ export default function TripsHome() {
                     ) : (
                       <>
                         <Link href={`/trips/${trip.id}`} className="trip-link">
-                          <span className="trip-link-brand">
-                            {trip.brand || "Trip"}
-                          </span>
-                          <span className="trip-link-title">{trip.title}</span>
-                          {trip.subtitle ? (
-                            <span className="trip-link-subtitle">
-                              {trip.subtitle}
+                          <CoverThumb cover={trip.cover} tripId={trip.id} />
+                          <span className="trip-link-copy">
+                            <span className="trip-link-brand">
+                              {trip.brand || "Trip"}
                             </span>
-                          ) : null}
-                          <span className="trip-link-meta">
-                            {trip.dates ? <span>{trip.dates}</span> : null}
-                            {trip.dates && trip.dayCount ? (
-                              <span className="dot" aria-hidden="true" />
+                            <span className="trip-link-title">{trip.title}</span>
+                            {trip.subtitle ? (
+                              <span className="trip-link-subtitle">
+                                {trip.subtitle}
+                              </span>
                             ) : null}
-                            <span>
-                              {trip.dayCount}{" "}
-                              {trip.dayCount === 1 ? "day" : "days"}
+                            <span className="trip-link-meta">
+                              {trip.dates ? <span>{trip.dates}</span> : null}
+                              {trip.dates && trip.dayCount ? (
+                                <span className="dot" aria-hidden="true" />
+                              ) : null}
+                              <span>
+                                {trip.dayCount}{" "}
+                                {trip.dayCount === 1 ? "day" : "days"}
+                              </span>
                             </span>
                           </span>
                         </Link>
@@ -559,7 +613,7 @@ export default function TripsHome() {
                           <div className="trip-row-actions">
                             <button
                               type="button"
-                              className="btn-edit"
+                              className="text-action"
                               onClick={() => openEditForm(trip)}
                               disabled={saving}
                             >
@@ -567,7 +621,7 @@ export default function TripsHome() {
                             </button>
                             <button
                               type="button"
-                              className="btn-delete"
+                              className="text-action text-action-danger"
                               onClick={() => deleteTrip(trip)}
                               disabled={saving}
                             >
@@ -598,15 +652,19 @@ export default function TripsHome() {
                 />
               </div>
             ) : (
-              <button type="button" className="btn-add" onClick={openCreateForm}>
-                Create trip
+              <button
+                type="button"
+                className="text-action text-action-create"
+                onClick={openCreateForm}
+              >
+                + Create trip
               </button>
             )
           ) : null}
         </main>
 
         <footer className="footer">
-          <p>Shared itineraries · Unlock to edit</p>
+          <p>© {new Date().getFullYear()} TD. All rights reserved.</p>
         </footer>
       </div>
     </>
