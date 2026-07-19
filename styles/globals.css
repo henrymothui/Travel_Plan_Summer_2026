@@ -205,36 +205,47 @@ button {
   margin-top: 0.25rem;
 }
 
-.back-to-trips {
-  display: inline-block;
-  margin-bottom: 1rem;
-  font-size: 0.82rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: rgba(242, 247, 244, 0.88);
-  text-decoration: none;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
-  animation: rise 0.9s ease-out both;
-  transition: color 0.15s ease;
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  animation: rise 0.9s ease-out 0.28s both;
 }
 
-.back-to-trips:hover {
+.hero-actions .cta {
+  animation: none;
+}
+
+.cta-secondary {
+  background: transparent;
   color: #ffffff;
+  border: 1.5px solid rgba(255, 255, 255, 0.75);
+  box-shadow: none;
+  text-decoration: none;
 }
 
-.back-to-trips:focus-visible {
-  outline: 2px solid #f0a46a;
-  outline-offset: 3px;
+.cta-secondary:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: none;
 }
 
-.footer a {
+.back-inline {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  text-decoration: none;
+}
+
+.footer-back {
   color: inherit;
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
-.footer a:hover {
+.footer-back:hover {
   color: var(--sea-deep);
 }
 
@@ -368,6 +379,9 @@ button {
 
 .cta {
   align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 0.85rem 1.35rem;
   border: 0;
   border-radius: 2px;
@@ -378,6 +392,7 @@ button {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.18), 0 10px 28px rgba(0, 0, 0, 0.22);
   transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
   animation: rise 0.9s ease-out 0.28s both;
+  text-decoration: none;
 }
 
 .cta:hover {

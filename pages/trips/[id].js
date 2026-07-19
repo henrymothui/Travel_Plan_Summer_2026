@@ -495,8 +495,8 @@ export default function TripPage() {
               Trip not found
             </h1>
             <p className="trips-lede">This itinerary may have been deleted.</p>
-            <Link href="/" className="cta" style={{ display: "inline-block" }}>
-              Back to trips
+            <Link href="/" className="cta" style={{ display: "inline-flex" }}>
+              ← Return to trips
             </Link>
           </main>
         </div>
@@ -550,9 +550,6 @@ export default function TripPage() {
           </div>
 
           <div className="hero-copy">
-            <Link href="/" className="back-to-trips">
-              All trips
-            </Link>
             <p className="brand">{trip.brand || "Trip"}</p>
             <h1 className="hero-title">{trip.title || "Loading…"}</h1>
             {trip.subtitle ? (
@@ -571,17 +568,25 @@ export default function TripPage() {
                 {trip.hotels ? <span>{trip.hotels}</span> : null}
               </div>
             )}
-            {days.length > 0 ? (
-              <button type="button" className="cta" onClick={scrollToItinerary}>
-                Open the itinerary
-              </button>
-            ) : null}
+            <div className="hero-actions">
+              <Link href="/" className="cta cta-secondary">
+                ← Return to trips
+              </Link>
+              {days.length > 0 ? (
+                <button type="button" className="cta" onClick={scrollToItinerary}>
+                  Open the itinerary
+                </button>
+              ) : null}
+            </div>
           </div>
         </header>
 
         <main id="itinerary" className="itinerary">
           <div className="section-head section-head-row">
             <div>
+              <Link href="/" className="btn btn-ghost back-inline">
+                ← Return to trips
+              </Link>
               <h2>Day by day</h2>
               <p>
                 Choose a day to see times, transport, meals, and stops. Tick items as
@@ -858,7 +863,9 @@ export default function TripPage() {
 
         <footer className="footer">
           <p>
-            <Link href="/">All trips</Link>
+            <Link href="/" className="footer-back">
+              ← Return to trips
+            </Link>
             {trip.brand || trip.dates
               ? ` · ${[trip.brand, trip.dates].filter(Boolean).join(" · ")}`
               : null}
